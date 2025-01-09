@@ -2,6 +2,7 @@ package di
 
 import (
 	"context"
+
 	"github.com/redis/go-redis/v9"
 
 	"github.com/soulcodex/karma-api/configs"
