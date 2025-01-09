@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "Update or create a karma assignee paired by username and assigner",
+  "properties": {
+    "data": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "karma_assignee"
+          ]
+        },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "username": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 255,
+              "pattern": "^[a-zA-Z0-9_\\-.]*$"
+            },
+            "assigner": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 255,
+              "pattern": "^[a-zA-Z0-9_\\-.]*$"
+            }
+          },
+          "required": [
+            "username",
+            "assigner"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "type",
+        "attributes"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "data"
+  ],
+  "additionalProperties": false
+}

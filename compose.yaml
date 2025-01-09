@@ -1,0 +1,4 @@
+name: karma_api
+
+include:
+  - compose-storage.yaml

@@ -6,13 +6,22 @@ import (
 )
 
 type KarmaDi struct {
-	Common *CommonServices
+	Common        *CommonServices
+	KarmaAssignee *KarmaAssigneeServices
 }
 
 func InitKarmaDi(ctx context.Context) *KarmaDi {
-	return &KarmaDi{
-		Common: InitCommonServices(ctx),
+	common := InitCommonServices(ctx)
+	karmaAssigneeServices := InitKarmaAssigneeServices(common)
+
+	karmaDI := &KarmaDi{
+		Common:        common,
+		KarmaAssignee: karmaAssigneeServices,
 	}
+
+	common.RegisterAllModulesRoutesOnRouter(common)
+
+	return karmaDI
 }
 
 func (kdi *KarmaDi) ErrorShutdown(ctx context.Context, cancel context.CancelFunc, err error) {
@@ -20,6 +29,8 @@ func (kdi *KarmaDi) ErrorShutdown(ctx context.Context, cancel context.CancelFunc
 	if err == nil {
 		return
 	}
+
+	_ = kdi.Common.Router.Shutdown(ctx)
 
 	kdi.Common.Logger.Error(
 		ctx,
@@ -31,6 +42,8 @@ func (kdi *KarmaDi) ErrorShutdown(ctx context.Context, cancel context.CancelFunc
 }
 
 func (kdi *KarmaDi) GracefulShutdown(ctx context.Context) {
+	_ = kdi.Common.Router.Shutdown(ctx)
+
 	kdi.Common.Logger.Info(
 		ctx,
 		"servers stopped",
