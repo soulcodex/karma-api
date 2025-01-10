@@ -32,3 +32,10 @@ func NewInitializedKarmaAssigneeCounter() *KarmaAssigneeCounter {
 		counter: defaultKarmaAssigneeCounter,
 	}
 }
+
+func NewKarmaAssigneeCounterWithCount(count uint64) *KarmaAssigneeCounter {
+	return &KarmaAssigneeCounter{
+		mutex:   sync.Mutex{},
+		counter: count,
+	}
+}

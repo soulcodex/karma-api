@@ -2,6 +2,7 @@ package di
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 )
 
@@ -22,6 +23,18 @@ func InitKarmaDi(ctx context.Context) *KarmaDi {
 	common.RegisterAllModulesRoutesOnRouter(common)
 
 	return karmaDI
+}
+
+func (kdi *KarmaDi) MustRunDatabaseMigrations(ctx context.Context) {
+	migrationsDone, migrationsErr := kdi.Common.MutexService.Mutex(ctx, "karma-api-database-migrations", func() (interface{}, error) {
+		return kdi.Common.DatabaseMigrator.Up()
+	})
+
+	if migrationsErr != nil {
+		panic(migrationsErr)
+	}
+
+	kdi.Common.Logger.Warn(ctx, fmt.Sprintf("Applied %d migrations!", migrationsDone.(int)))
 }
 
 func (kdi *KarmaDi) ErrorShutdown(ctx context.Context, cancel context.CancelFunc, err error) {

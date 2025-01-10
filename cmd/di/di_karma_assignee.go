@@ -19,7 +19,7 @@ type KarmaAssigneeServices struct {
 }
 
 func InitKarmaAssigneeServices(c *CommonServices) *KarmaAssigneeServices {
-	repository := persistence.NewInMemoryKarmaAssigneeRepository()
+	repository := persistence.NewMySQLKarmaAssigneeRepository(c.DBConnectionPool)
 
 	ks := &KarmaAssigneeServices{
 		repository: persistence.NewInMemoryKarmaAssigneeRepository(),

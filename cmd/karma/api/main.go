@@ -20,6 +20,8 @@ func main() {
 		cancel()
 	}()
 
+	karmaDi.MustRunDatabaseMigrations(ctx)
+
 	go func() {
 		srvAddress := fmt.Sprintf("%s:%d", karmaDi.Common.Config.ServerHost, karmaDi.Common.Config.ServerPort)
 		karmaDi.Common.Logger.Info(ctx, "Starting application...")

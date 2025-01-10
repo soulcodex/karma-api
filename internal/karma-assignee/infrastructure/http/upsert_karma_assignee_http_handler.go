@@ -18,7 +18,6 @@ func HandleUpsertKarmaAssignee(
 	jrm *xjsonapi.JsonApiResponseMiddleware,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		bus = nil
 		var req UpsertKarmaAssigneeRequest
 		if err := jsonapi.UnmarshalPayload(r.Body, &req); err != nil {
 			res, statusCode := xjsonapiresponse.NewBadRequest("Invalid received request"), http.StatusBadRequest

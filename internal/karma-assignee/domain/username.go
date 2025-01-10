@@ -18,7 +18,7 @@ func NewUsername(u string) (Username, error) {
 		domainvalidation.NotEmpty(),
 		domainvalidation.Regex(validUsernameRegex),
 	)
-	if err := validator.Validate(u, invalidKarmaAssigneeIdProvidedErr); err != nil {
+	if err := validator.Validate(u, invalidUsernameProvidedErr); err != nil {
 		return "", err
 	}
 

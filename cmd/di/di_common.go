@@ -14,8 +14,11 @@ import (
 	xjsonschema "github.com/soulcodex/karma-api/pkg/json-schema"
 	"github.com/soulcodex/karma-api/pkg/logger"
 	xredis "github.com/soulcodex/karma-api/pkg/redis"
+	"github.com/soulcodex/karma-api/pkg/sqldb"
+	xmysql "github.com/soulcodex/karma-api/pkg/sqldb/mysql"
 	"github.com/soulcodex/karma-api/pkg/utils"
 
+	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/sethvargo/go-envconfig"
 )
@@ -29,6 +32,8 @@ type CommonServices struct {
 	TimeProvider              utils.DateTimeProvider
 	JsonApiResponseMiddleware *xjsonapi.JsonApiResponseMiddleware
 	JsonSchemaValidator       *xjsonschema.JsonSchemaValidator
+	DatabaseMigrator          sqldb.DatabaseMigrator
+	DBConnectionPool          sqldb.ConnectionPool
 	Router                    *httpserver.Router
 	RedisClient               *redis.Client
 	MutexService              distributedsync.MutexService
@@ -47,6 +52,8 @@ func InitCommonServices(_ context.Context) *CommonServices {
 	httpRouter := buildRouter(configuration, jsonLogger, uuidProvider)
 	redisClient := buildRedisClient(configuration)
 	mutexService := distributedsync.NewRedisMutexService(redisClient, jsonLogger)
+	mysqlPool := buildMySQLConnectionPool(configuration)
+	mysqlMigrator := xmysql.NewMysqlDatabaseMigrator(mysqlPool.Writer(), configuration.MigrationsPath, "migrations")
 
 	jsonApiResponseMiddleware := xjsonapi.NewJsonApiResponseMiddleware(jsonLogger)
 	jsonSchemaValidator := xjsonschema.NewJsonSchemaValidator(configuration.BaseJsonSchemaPath)
@@ -62,6 +69,8 @@ func InitCommonServices(_ context.Context) *CommonServices {
 		TimeProvider:              timeProvider,
 		JsonApiResponseMiddleware: jsonApiResponseMiddleware,
 		JsonSchemaValidator:       jsonSchemaValidator,
+		DBConnectionPool:          mysqlPool,
+		DatabaseMigrator:          mysqlMigrator,
 		Router:                    httpRouter,
 		RedisClient:               redisClient,
 		MutexService:              mutexService,
@@ -74,6 +83,28 @@ func InitCommonServices(_ context.Context) *CommonServices {
 	common.RegisterAllModulesRoutesOnRouter(common)
 
 	return common
+}
+
+func buildMySQLConnectionPool(cfg configs.Config) *xmysql.ConnectionPoolMySQL {
+	credentials := xmysql.NewCredentials(
+		cfg.MysqlUser,
+		cfg.MysqlPassword,
+		cfg.MysqlHost,
+		cfg.MysqlPort,
+		cfg.MysqlDatabase,
+	)
+
+	reader, err := xmysql.NewReader(credentials)
+	if err != nil {
+		panic(err)
+	}
+
+	writer, err := xmysql.NewWriter(credentials)
+	if err != nil {
+		panic(err)
+	}
+
+	return xmysql.NewMySQLConnectionPool(writer, reader)
 }
 
 func buildRedisClient(cfg configs.Config) *redis.Client {

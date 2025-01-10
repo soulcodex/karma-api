@@ -5,3 +5,12 @@ services:
       - "6379:6379"
     healthcheck:
       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+  mysql:
+    image: mysql:8.0.40-bookworm
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=can_all
+      - MYSQL_PASSWORD=can_all
+      - MYSQL_USER=master_user
+      - MYSQL_DATABASE=karma_api

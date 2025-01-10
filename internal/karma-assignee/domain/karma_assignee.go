@@ -25,6 +25,22 @@ func NewKarmaAssignee(
 	}
 }
 
+func NewKarmaAssigneeFromPrimitives(
+	id,
+	username,
+	assigner string,
+	count int64,
+	at time.Time,
+) *KarmaAssignee {
+	return &KarmaAssignee{
+		id:        KarmaAssigneeId(id),
+		username:  Username(username),
+		assigner:  Username(assigner),
+		counter:   NewKarmaAssigneeCounterWithCount(uint64(count)),
+		createdAt: at,
+	}
+}
+
 func (ka *KarmaAssignee) Id() KarmaAssigneeId {
 	return ka.id
 }
@@ -39,6 +55,10 @@ func (ka *KarmaAssignee) Assigner() Username {
 
 func (ka *KarmaAssignee) CreatedAt() time.Time {
 	return ka.createdAt
+}
+
+func (ka *KarmaAssignee) CounterAsNumber() uint64 {
+	return ka.counter.counter
 }
 
 func (ka *KarmaAssignee) IncrementKarma() error {
