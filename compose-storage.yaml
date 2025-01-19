@@ -1,11 +1,13 @@
 services:
   redis:
+    container_name: karma-api-redis
     image: redis:alpine3.18
     ports:
       - "6379:6379"
     healthcheck:
       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
   mysql:
+    container_name: karma-api-mysql
     image: mysql:8.0.40-bookworm
     ports:
       - 3306:3306

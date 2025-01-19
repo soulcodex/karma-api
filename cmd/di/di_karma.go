@@ -3,6 +3,7 @@ package di
 import (
 	"context"
 	"fmt"
+	"github.com/joho/godotenv"
 	"log/slog"
 )
 
@@ -23,6 +24,15 @@ func InitKarmaDi(ctx context.Context) *KarmaDi {
 	common.RegisterAllModulesRoutesOnRouter(common)
 
 	return karmaDI
+}
+
+func InitKarmaDIWithEnvFiles(ctx context.Context, envFiles ...string) *KarmaDi {
+	err := godotenv.Overload(envFiles...)
+	if err != nil {
+		panic(err)
+	}
+
+	return InitKarmaDi(ctx)
 }
 
 func (kdi *KarmaDi) MustRunDatabaseMigrations(ctx context.Context) {

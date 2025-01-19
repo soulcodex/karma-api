@@ -46,8 +46,7 @@ func (mkr *MySQLKarmaAssigneeRepository) FindByUsernameAndAssigner(
 	queryBuilder := sq.Select(mkr.tableFields...).
 		From(mkr.tableName).
 		Where(sq.Eq{"username": username.String(), "assigner": assigner.String()}).
-		OrderBy("created_at DESC").
-		Limit(1)
+		OrderBy("created_at DESC")
 
 	res, err := queryBuilder.RunWith(mkr.connPool.Reader()).QueryContext(ctx)
 

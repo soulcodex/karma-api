@@ -14,7 +14,7 @@ func newMysqlKarmaAssigneeHydrator() sqldb.HydratorFunc[*kadomain.KarmaAssignee]
 			id        string
 			username  string
 			assigner  string
-			count     int64
+			count     uint64
 			createdAt time.Time
 		)
 

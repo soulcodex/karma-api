@@ -29,14 +29,14 @@ func NewKarmaAssigneeFromPrimitives(
 	id,
 	username,
 	assigner string,
-	count int64,
+	count uint64,
 	at time.Time,
 ) *KarmaAssignee {
 	return &KarmaAssignee{
 		id:        KarmaAssigneeId(id),
 		username:  Username(username),
 		assigner:  Username(assigner),
-		counter:   NewKarmaAssigneeCounterWithCount(uint64(count)),
+		counter:   NewKarmaAssigneeCounterWithCount(count),
 		createdAt: at,
 	}
 }

@@ -1,3 +1,5 @@
+DOCKER_MOCKERY := "docker run --user $(id -u):$(id -g) --rm -v $(pwd):/src -w /src  vektra/mockery:v2.51.0"
+
 # List all available commands
 help:
     @just --list
@@ -16,7 +18,22 @@ stop flags="--volumes --remove-orphans":
 # Run karma api binary
 run-api:
     #!/usr/bin/env bash
+    cp .env.example-local .env
     go run cmd/karma/api/main.go
+
+# interfaceName: The interface name which your aim to generate a mock struct
+# outputPkg: The package used by the mock generator to be used as package name for mocks
+# Generate mocks given an interface name and the output package name
+generate-mock $interfaceName $outputPkg:
+    #!/usr/bin/env bash
+    export DIR=$(find . -type d -name .git -prune -o -type d -print | fzf --header="Select input directory to search interfaces") && \
+    export MOCK_FILE_NAME=$(echo $interfaceName | sed -r 's/([a-z])([A-Z])/\1_\L\2/g' | tr '[:upper:]' '[:lower:]') && \
+    {{ DOCKER_MOCKERY }} --dir $DIR \
+        --output $DIR/mocks \
+        --name {{ interfaceName }} \
+        --outpkg {{ outputPkg }} \
+        --filename "$MOCK_FILE_NAME.go" \
+        --structname {{ interfaceName }}Mock
 
 # Run tests
 test:

@@ -12,7 +12,7 @@ import (
 const baseKarmaAssigneeRequestsJsonSchemaPath = "karma-assignee/"
 
 type KarmaAssigneeServices struct {
-	repository domain.KarmaAssigneeRepository
+	Repository domain.KarmaAssigneeRepository
 
 	// Handlers
 	UpsertKarmaAssigneeCommandHandler *application.UpsertKarmaAssigneeCommandHandler
@@ -22,7 +22,7 @@ func InitKarmaAssigneeServices(c *CommonServices) *KarmaAssigneeServices {
 	repository := persistence.NewMySQLKarmaAssigneeRepository(c.DBConnectionPool)
 
 	ks := &KarmaAssigneeServices{
-		repository: persistence.NewInMemoryKarmaAssigneeRepository(),
+		Repository: repository,
 		UpsertKarmaAssigneeCommandHandler: application.NewUpsertKarmaAssigneeCommandHandler(
 			repository,
 			c.ULIDProvider,
