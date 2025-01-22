@@ -9,6 +9,7 @@ run-karma-api:
 # Start necessary infra to run the integration tests
 start:
     #!/usr/bin/env bash
+    cp .env.example .env
     docker compose up -d
 
 # Shutdown development infra
