@@ -24,7 +24,13 @@ which lives in the [justfile](./justfile)
 4. [docker](https://docs.docker.com/get-started/get-docker/) to be able to bootstrap
 the service whit its infrastructure dependencies
 
-5. Install all the dependencies by running
+5. [rubenv/sql-migrate](https://github.com/rubenv/sql-migrate) to be able tu run our database migrations through CLI by running
+
+```bash
+go install github.com/rubenv/sql-migrate/...@latest
+```
+
+6. Install all the dependencies by running
 
 ```bash
 go mod tidy
@@ -34,19 +40,19 @@ If something goes wrong try running
 go mod tidy -compat=1.21
 ```
 
-6. Bootstrap all those infrastructure pieces needed by running
+7. Bootstrap all those infrastructure pieces needed by running
 ```bash
 just start
 ```
 This command will generate the starter environment file and using
 docker it will spin up all the infrastructure services.
 
-7. Let's run our service by running
+8. Let's run our service by running
 ```bash
-just run-karma-api
+just run-api
 ```
 
-8. If you want to know all the available commands just run
+9. If you want to know all the available commands just run
 ```bash
 just help
 ```
